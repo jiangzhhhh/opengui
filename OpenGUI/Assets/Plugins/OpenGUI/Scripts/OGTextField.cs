@@ -52,7 +52,7 @@ public class OGTextField : OGWidget {
 				
 				GUIStyle style = new GUIStyle();
 				style.normal.textColor = currentStyle.text.fontColor;
-				style.font = currentStyle.text.font.dynamicFont;
+				style.font = currentStyle.text.font.font;
 				style.fontSize = currentStyle.text.fontSize;
 				style.alignment = currentStyle.text.alignment;
 				style.wordWrap = currentStyle.text.wordWrap;

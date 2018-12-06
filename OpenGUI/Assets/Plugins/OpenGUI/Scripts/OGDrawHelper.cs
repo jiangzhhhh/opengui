@@ -70,18 +70,15 @@ public class OGDrawHelper {
 		float width = style.padding.left + style.padding.right;
 		
 		float size = ( style.fontSize * 1.0f ) / style.font.size;
-		float space = ( style.font.GetCharacterInfo ( " "[0] ).width * size );
+		float space = ( style.font.GetCharacterInfo ( " "[0] ).advance * size );
 		
 		for ( int c = 0; c < str.Length; c++ ) {
 			if ( str[c] == " "[0] ) {
 				width += space;
 
 			} else {
-				OGCharacterInfo info = style.font.GetCharacterInfo ( str[c] );
-
-				if ( info != null ) {
-					width += info.width * size;
-				}
+				CharacterInfo info = style.font.GetCharacterInfo ( str[c] );
+				width += info.advance * size;
 			}
 		}
 
@@ -151,12 +148,12 @@ public class OGDrawHelper {
 		float right = rect.width - style.padding.right - style.padding.left;
 		float top = rect.height - style.padding.top;
 		float bottom = style.padding.bottom;
-		float middle = ( rect.height / 2 ) + ( ( style.font.info.lineSpacing * size ) / 2 );
+		float middle = ( rect.height / 2 ) + ( ( style.font.font.lineHeight * size ) / 2 );
 		float center = left + right / 2;
 		
 		// Positioning
 		Vector2 anchor = Vector2.zero;
-		float space = ( style.font.GetCharacterInfo ( " "[0] ).width * size );
+		float space = ( style.font.GetCharacterInfo ( " "[0] ).advance * size );
 		
 		// Line and progression management
 		Vector2 advance = Vector2.zero;
@@ -165,11 +162,11 @@ public class OGDrawHelper {
 		int lastSpace = 0;
 		float lineWidth = 0;
 		float lineWidthAtLastSpace = 0;
-		float lineHeight = style.font.info.lineSpacing * size;
+		float lineHeight = style.font.font.lineHeight * size;
 		int emergencyBrake = 0;
 		
 		// Temp vars
-		OGCharacterInfo info;
+		CharacterInfo info;
 
 		// Set anchor
 		switch ( alignment ) {
@@ -252,8 +249,8 @@ public class OGDrawHelper {
 					lastSpace = c;
 				
 				// This character is a regular glyph
-				} else if ( info != null ) {
-					lineWidth += info.width * size;
+				} else{
+					lineWidth += info.advance * size;
 				
 				}
 
@@ -280,10 +277,6 @@ public class OGDrawHelper {
 			// Draw glyphs
 			for ( int g = thisLineStart; g < nextLineStart; g++ ) {
 				info = style.font.GetCharacterInfo ( str[g] );
-				
-				if ( info == null ) {
-					continue;
-				}
 
 				Rect vert = new Rect ( info.vert.x * size, info.vert.y * size, info.vert.width * size, info.vert.height * size );
 				Vector2[] uv = new Vector2[4];
@@ -345,7 +338,7 @@ public class OGDrawHelper {
 				}
 			
 				// Advance regardless if the glyph is drawn or not	
-				advance.x += info.width * size;
+				advance.x += info.advance * size;
 		
 				// Clipping
 				if ( clipping != null ) {

@@ -220,7 +220,7 @@ public class OGRoot : MonoBehaviour {
 	// Draw loop
 	//////////////////
 	public void OnPostRender () {
-		if ( skin != null && widgets != null ) {
+        if ( skin != null && widgets != null ) {
 			int i = 0;
 			int o = 0;
 			OGWidget w;
@@ -228,9 +228,9 @@ public class OGRoot : MonoBehaviour {
 			GL.PushMatrix();
 			GL.LoadPixelMatrix ( 0, screenWidth, 0, screenHeight );
 
+			OGDrawHelper.SetPass(skin.atlas);
 			// Draw skin
 			GL.Begin(GL.QUADS);
-			OGDrawHelper.SetPass(skin.atlas);
 			
 			for ( i = 0; i < widgets.Length; i++ ) {
 				w = widgets[i];
@@ -260,12 +260,12 @@ public class OGRoot : MonoBehaviour {
 				
 				GL.Begin(GL.QUADS);
 				
-				if ( skin.fontShader != null && skin.fonts[i].bitmapFont != null ) {
-					skin.fonts[i].bitmapFont.material.shader = skin.fontShader;
+				if ( skin.fontShader != null && skin.fonts[i].font != null ) {
+					skin.fonts[i].font.material.shader = skin.fontShader;
 				}
 				
-				if ( skin.fonts[i].bitmapFont != null ) {
-					OGDrawHelper.SetPass ( skin.fonts[i].bitmapFont.material );
+				if ( skin.fonts[i].font != null ) {
+					OGDrawHelper.SetPass ( skin.fonts[i].font.material );
 				}
 
 				for ( o = 0; o < widgets.Length; o++ ) {

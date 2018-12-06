@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+
 Shader "GUI/Alpha Sliced" {
 	Properties {
 		_MainTex ("Texture", 2D) = "white" {}
@@ -37,7 +39,7 @@ Shader "GUI/Alpha Sliced" {
 					v2f o;
 					o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
 					o.uv_MainTex = TRANSFORM_TEX(v.texcoord, _MainTex);
-					o.wpos = mul(_Object2World, v.vertex);
+					o.wpos = mul(unity_ObjectToWorld, v.vertex);
 					return o;
 				}
 			

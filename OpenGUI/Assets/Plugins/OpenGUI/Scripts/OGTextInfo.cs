@@ -8,7 +8,7 @@ public class OGTextInfo {
 		public int end;
 		public float width;
 		public float height;
-		public OGCharacterInfo[] chars = new OGCharacterInfo [ 999 ];
+		public CharacterInfo[] chars = new CharacterInfo [ 999 ];
 
 		private int cIndex = 0;
 
@@ -29,7 +29,7 @@ public class OGTextInfo {
 			cIndex = 0;
 		}
 
-		public void AddChar ( OGCharacterInfo info ) {
+		public void AddChar ( CharacterInfo info ) {
 			chars[cIndex] = info;
 			cIndex++;
 		}
@@ -56,7 +56,7 @@ public class OGTextInfo {
 	}
 
 	public void Calculate ( string str, OGTextStyle style, float size, Rect rect ) {
-		lineHeight = style.font.info.lineSpacing * size;
+		lineHeight = style.font.font.lineHeight * size;
 
 		LineInfo line = NewLine ( 0 );
 		int lastSpace = 0;
@@ -68,7 +68,7 @@ public class OGTextInfo {
 		int c = 0;
 
 		for ( c = 0; c < str.Length; c++ ) {
-			OGCharacterInfo info = style.font.GetCharacterInfo ( str[c] );
+			CharacterInfo info = style.font.GetCharacterInfo ( str[c] );
 			
 			// This character is a carriage return	
 			if ( str[c] == "\n"[0] ) {
@@ -76,7 +76,7 @@ public class OGTextInfo {
 				line = NewLine ( line.end );
 			
 			// This character is a space
-			} else if ( info.space ) {
+			} else if ( info.IsSpace() ) {
 				line.width += space;
 				lastSpace = c;
 				

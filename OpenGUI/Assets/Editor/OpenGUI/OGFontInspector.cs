@@ -34,8 +34,7 @@ public class OGFontInspector : Editor {
 	
 		if ( !font ) { return; }
 		
-		font.dynamicFont = (Font) EditorGUILayout.ObjectField ( "Dynamic font", font.dynamicFont, typeof(Font), false );
-		font.bitmapFont = (Font) EditorGUILayout.ObjectField ( "Unicode font", font.bitmapFont, typeof(Font), false );
+		font.font = (Font) EditorGUILayout.ObjectField ( "Unicode font", font.font, typeof(Font), false );
 		font.size = EditorGUILayout.IntField ( "Font size", font.size );
 
 		EditorGUILayout.Space ();

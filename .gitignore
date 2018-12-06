@@ -2,3 +2,9 @@
 *.swp
 Library
 Temp
+OpenGUI/Library
+OpenGUI/obj
+OpenGUI/Temp
+OpenGUI/*.sln
+OpenGUI/*.csproj
+OpenGUI/.vs
