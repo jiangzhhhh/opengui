@@ -642,8 +642,16 @@ public class OGRoot : MonoBehaviour {
 
 					break;
 			}
-		}
-	}
+
+            //hack:触发一次position的修改->引发inspector更新->引发GameView刷新->驱动OnGUI事件派发
+            {
+                var old = this.transform.position;
+                var dirtyPos = old + Vector3.one;
+                this.transform.position = dirtyPos;
+                this.transform.position = old;
+            }
+        }
+    }
 	#endif
 
 
