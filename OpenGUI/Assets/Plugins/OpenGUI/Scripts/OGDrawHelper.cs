@@ -278,26 +278,17 @@ public class OGDrawHelper {
 			for ( int g = thisLineStart; g < nextLineStart; g++ ) {
 				info = style.font.GetCharacterInfo ( str[g] );
 
-				Rect vert = new Rect ( info.vert.x * size, info.vert.y * size, info.vert.width * size, info.vert.height * size );
-				Vector2[] uv = new Vector2[4];
-
-				if ( info.flipped ) {
-					uv[3] = new Vector2 ( info.uv.x, info.uv.y + info.uv.height );
-					uv[2] = new Vector2 ( info.uv.x + info.uv.width, info.uv.y + info.uv.height );
-					uv[1] = new Vector2 ( info.uv.x + info.uv.width, info.uv.y );
-					uv[0] = new Vector2 ( info.uv.x, info.uv.y );
-				} else {
-					uv[0] = new Vector2 ( info.uv.x, info.uv.y );
-					uv[1] = new Vector2 ( info.uv.x, info.uv.y + info.uv.height );
-					uv[2] = new Vector2 ( info.uv.x + info.uv.width, info.uv.y + info.uv.height );
-					uv[3] = new Vector2 ( info.uv.x + info.uv.width, info.uv.y );
-				}		
+                Rect vert = Rect.MinMaxRect(info.minX * size, info.maxY * size, info.maxX * size, info.minY * size);
+                Vector2 uvBottomLeft = info.uvBottomLeft;
+                Vector2 uvTopLeft = info.uvTopLeft;
+                Vector2 uvTopRight = info.uvTopRight;
+                Vector2 uvBottomRight = info.uvBottomRight;
 
 				// Quad corners
 				float gLeft = anchor.x + vert.x + rect.x + advance.x;
 				float gRight = anchor.x + vert.x + rect.x + advance.x + vert.width;
-				float gBottom = anchor.y + vert.height + vert.y + rect.y + advance.y;
-				float gTop = anchor.y + vert.height + vert.y + rect.y + advance.y - vert.height;
+				float gBottom = anchor.y + vert.height + vert.y + rect.y + advance.y - lineHeight;
+				float gTop = anchor.y + vert.height + vert.y + rect.y + advance.y - vert.height - lineHeight;
 	
 				// If it's a space, set appropriate corners
 				if ( str[g] == " "[0] ) {
@@ -343,26 +334,26 @@ public class OGDrawHelper {
 				// Clipping
 				if ( clipping != null ) {
 					if ( gLeft < clipping.drawRct.xMin ) {
-						uv[0].x += ( clipping.drawRct.xMin - gLeft ) / atlasSize.x;
-						uv[1].x += ( clipping.drawRct.xMin - gLeft ) / atlasSize.x;
+						uvBottomLeft.x += ( clipping.drawRct.xMin - gLeft ) / atlasSize.x;
+						uvTopLeft.x += ( clipping.drawRct.xMin - gLeft ) / atlasSize.x;
 						gLeft = clipping.drawRct.xMin;
 					}
 					
 					if ( gRight > clipping.drawRct.xMax ) {
-						uv[2].x -= ( gRight - clipping.drawRct.xMax ) / atlasSize.x;
-						uv[3].x -= ( gRight - clipping.drawRct.xMax ) / atlasSize.x;
+						uvTopRight.x -= ( gRight - clipping.drawRct.xMax ) / atlasSize.x;
+						uvBottomRight.x -= ( gRight - clipping.drawRct.xMax ) / atlasSize.x;
 						gRight = clipping.drawRct.xMax;
 					}
 					
 					if ( gBottom < clipping.drawRct.yMin ) {
-						uv[0].y += ( clipping.drawRct.yMin - gBottom ) / atlasSize.y;
-						uv[3].y += ( clipping.drawRct.yMin - gBottom ) / atlasSize.y;
+						uvBottomLeft.y += ( clipping.drawRct.yMin - gBottom ) / atlasSize.y;
+						uvBottomRight.y += ( clipping.drawRct.yMin - gBottom ) / atlasSize.y;
 						gBottom = clipping.drawRct.yMin;
 					}
 					
 					if ( gTop > clipping.drawRct.yMax ) {
-						uv[1].y += ( gTop - clipping.drawRct.yMax ) / atlasSize.y;
-						uv[2].y += ( gTop - clipping.drawRct.yMax ) / atlasSize.y;
+						uvTopLeft.y += ( gTop - clipping.drawRct.yMax ) / atlasSize.y;
+						uvTopRight.y += ( gTop - clipping.drawRct.yMax ) / atlasSize.y;
 						gTop = clipping.drawRct.yMax;
 					}
 
@@ -373,19 +364,19 @@ public class OGDrawHelper {
 				}
 
 				// Bottom Left
-				GL.TexCoord2 ( uv[0].x, uv[0].y );
+				GL.TexCoord2 ( uvBottomLeft.x, uvBottomLeft.y );
 				GL.Vertex3 ( gLeft, gBottom, depth );
 				
 				// Top left
-				GL.TexCoord2 ( uv[1].x, uv[1].y );
+				GL.TexCoord2 ( uvTopLeft.x, uvTopLeft.y );
 				GL.Vertex3 ( gLeft, gTop, depth );
 
 				// Top right
-				GL.TexCoord2 ( uv[2].x, uv[2].y );
+				GL.TexCoord2 ( uvTopRight.x, uvTopRight.y );
 				GL.Vertex3 ( gRight, gTop, depth );
 			
 				// Bottom right
-				GL.TexCoord2 ( uv[3].x, uv[3].y );
+				GL.TexCoord2 ( uvBottomRight.x, uvBottomRight.y );
 				GL.Vertex3 ( gRight, gBottom, depth );
 
 			}

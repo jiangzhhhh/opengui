@@ -61,7 +61,7 @@ public class OGTextInfo {
 		LineInfo line = NewLine ( 0 );
 		int lastSpace = 0;
 		float lineWidthAtLastSpace = 0;
-		float space = ( style.font.GetCharacterInfo ( " "[0] ).width * size );
+		float space = ( style.font.GetCharacterInfo ( " "[0] ).advance * size );
 		
 		float right = rect.width - style.padding.right - style.padding.left;
 		
@@ -95,7 +95,7 @@ public class OGTextInfo {
 			
 			// This character is a regular glyph
 			} else {
-				line.width += info.width * size;
+				line.width += info.advance * size;
 			
 				// The line width has exceeded the border
 				if ( line.width >= right ) {
