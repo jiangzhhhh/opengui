@@ -34,7 +34,7 @@ public class OGRoot : MonoBehaviour {
 	public OGWidget downWidget;	
 	public bool isMouseOver = false;
 
-	private OGWidget[] widgets;
+	private List<OGWidget> widgets;
 	private List< OGWidget > mouseOver = new List< OGWidget > ();
 	private Texture2D guiTex;
 	private Camera cam;
@@ -232,7 +232,7 @@ public class OGRoot : MonoBehaviour {
 			// Draw skin
 			GL.Begin(GL.QUADS);
 			
-			for ( i = 0; i < widgets.Length; i++ ) {
+			for ( i = 0; i < widgets.Count; i++ ) {
 				w = widgets[i];
 				
 				if ( w == null ) {
@@ -260,15 +260,15 @@ public class OGRoot : MonoBehaviour {
 				
 				GL.Begin(GL.QUADS);
 				
-				if ( skin.fontShader != null && skin.fonts[i].font != null ) {
-					skin.fonts[i].font.material.shader = skin.fontShader;
-				}
+				//if ( skin.fontShader != null && skin.fonts[i].font != null ) {
+				//	skin.fonts[i].font.material.shader = skin.fontShader;
+				//}
 				
 				if ( skin.fonts[i].font != null ) {
 					OGDrawHelper.SetPass ( skin.fonts[i].font.material );
 				}
 
-				for ( o = 0; o < widgets.Length; o++ ) {
+				for ( o = 0; o < widgets.Count; o++ ) {
 					w = widgets[o];
 				
 					if ( w == null ) { continue; }
@@ -295,7 +295,7 @@ public class OGRoot : MonoBehaviour {
 				GL.Begin(GL.LINES);
 				lineMaterial.SetPass(0);
 					
-				for ( i = 0; i < widgets.Length; i++ ) {	
+				for ( i = 0; i < widgets.Count; i++ ) {	
 					w = widgets[i];
 					
 					if ( w != null && w.gameObject.activeSelf && w.isDrawn ) {
@@ -307,7 +307,7 @@ public class OGRoot : MonoBehaviour {
 			}
 			
 			// Draw textures
-			for ( i = 0; i < widgets.Length; i++ ) {	
+			for ( i = 0; i < widgets.Count; i++ ) {	
 				w = widgets[i];
 				
 				if ( w != null && w.gameObject.activeSelf && w.isDrawn ) {
@@ -342,19 +342,23 @@ public class OGRoot : MonoBehaviour {
 		downWidget = null;
 	}
 
-	private OGWidget [] GetCurrentWidgets () {
-		List< OGWidget > list = new List< OGWidget > ();
-
-		for ( int i = 0; i < currentPages.Length; i++ ) {
+    static int WidgetCompare(OGWidget a, OGWidget b){return b.transform.position.z.CompareTo(a.transform.position.z);}
+    List<OGWidget> ws = new List<OGWidget>();
+	private void UpdateCurrentWidgets () {
+        if (widgets == null)
+            widgets = new List<OGWidget>();
+        widgets.Clear();
+        for ( int i = 0; i < currentPages.Length; i++ ) {
 			OGPage page = currentPages [ i ];
-			OGWidget[] ws = page.gameObject.GetComponentsInChildren<OGWidget>();
-			
-			for ( int w = 0; w < ws.Length; w++ ) {
-				list.Add ( ws [ w ] );
-			}
+            ws.Clear();
+			page.gameObject.GetComponentsInChildren<OGWidget>(ws);
+            if (ws.Capacity < ws.Count)
+                ws.Capacity = ws.Count;
+            widgets.AddRange(ws);
 		}
-
-		return list.OrderByDescending ( (w) => w.transform.position.z ).ToArray ();
+        if (widgets.Capacity < widgets.Count)
+            widgets.Capacity = widgets.Count;
+        widgets.Sort(WidgetCompare);
 	}
 
 	public void Update () {
@@ -535,7 +539,7 @@ public class OGRoot : MonoBehaviour {
 	private OGWidget FindMouseOverWidget ( Event e ) {
 		Vector2 pos = new Vector2 ( e.mousePosition.x * reverseRatio.x, screenHeight - e.mousePosition.y * reverseRatio.y );
 
-		for ( int i = widgets.Length - 1; i >= 0; i-- ) {
+		for ( int i = widgets.Count - 1; i >= 0; i-- ) {
 			if ( widgets[i].drawRct.Contains ( pos ) ) {
 				return widgets[i];
 			}
@@ -652,9 +656,9 @@ public class OGRoot : MonoBehaviour {
 		mouseOver.Clear ();
 		
 		// Update widget lists	
-		widgets = GetCurrentWidgets ();
+		UpdateCurrentWidgets ();
 
-		for ( int i = 0; i < widgets.Length; i++ ) {
+		for ( int i = 0; i < widgets.Count; i++ ) {
 			OGWidget w = widgets[i];
 
 			if ( w == null || !w.isDrawn || w.isDisabled ) { continue; }

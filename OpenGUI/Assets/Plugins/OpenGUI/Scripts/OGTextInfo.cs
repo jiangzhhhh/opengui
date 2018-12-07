@@ -61,7 +61,7 @@ public class OGTextInfo {
 		LineInfo line = NewLine ( 0 );
 		int lastSpace = 0;
 		float lineWidthAtLastSpace = 0;
-		float space = ( style.font.GetCharacterInfo ( " "[0] ).advance * size );
+		float space = ( style.font.GetCharacterInfo (' ' ).advance * size );
 		
 		float right = rect.width - style.padding.right - style.padding.left;
 		
@@ -71,7 +71,7 @@ public class OGTextInfo {
 			CharacterInfo info = style.font.GetCharacterInfo ( str[c] );
 			
 			// This character is a carriage return	
-			if ( str[c] == "\n"[0] ) {
+			if ( str[c] == '\n' ) {
 				line.End ( c );
 				line = NewLine ( line.end );
 			

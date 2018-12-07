@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class OGScrollView : OGWidget {
 	public enum ScrollDirection {
@@ -23,7 +24,7 @@ public class OGScrollView : OGWidget {
 	public float elasticity = 2;
 	public Vector2 thumbScale = new Vector2 ( 16, 1 );
 
-	private OGWidget[] widgets;
+	private List<OGWidget> widgets = new List<OGWidget>();
 	private Vector2 bounds;
 	private bool inPlace = true;
 
@@ -56,11 +57,13 @@ public class OGScrollView : OGWidget {
 	// Update
 	////////////////
 	private void UpdateChildren () {
-		widgets = this.gameObject.GetComponentsInChildren<OGWidget>();
+		this.gameObject.GetComponentsInChildren<OGWidget>(widgets);
+        if (widgets.Capacity < widgets.Count)
+            widgets.Capacity = widgets.Count;
 
-		bounds = Vector2.zero;
+        bounds = Vector2.zero;
 		
-		for ( int i = 0; i < widgets.Length; i++ ) {
+		for ( int i = 0; i < widgets.Count; i++ ) {
 			OGWidget w = widgets[i];
 		
 			if ( w != null && w != this ) {

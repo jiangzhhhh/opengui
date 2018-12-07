@@ -10,6 +10,7 @@ public class OGSlider : OGWidget {
 	public Orientation orientation;
 	public float sliderValue = 0;
 	public OGLabel sliderLabel;
+    bool sliderDirty;
 	public float backgroundHeight = 0.25f;
 	public bool toPercent = true;
 	public string suffix = "";
@@ -39,6 +40,7 @@ public class OGSlider : OGWidget {
 	// Mouse
 	////////////////
 	override public void OnMouseDrag () {
+        float oldSliderValue = sliderValue;
 		if ( sliderValue >= 0 && sliderValue <= 1 ) {
 			if ( orientation == Orientation.Horizontal ) {
 				sliderValue = ( Input.mousePosition.x - drawRct.x ) / drawRct.width;
@@ -46,9 +48,8 @@ public class OGSlider : OGWidget {
 				sliderValue = ( Input.mousePosition.y - drawRct.y ) / drawRct.height;
 			}
 		}
-	
-
 		sliderValue = Mathf.Clamp ( Mathf.Round ( sliderValue * 100 ) / 100, 0, 1 );
+        sliderDirty = (oldSliderValue != sliderValue);
 	}
 
 	override public void OnMouseCancel () {
@@ -71,8 +72,9 @@ public class OGSlider : OGWidget {
 		mouseRct = CombineRects ( GetThumbRect(), GetBackgroundRect() );
 		
 		// Update data
-		if ( sliderLabel ) {
-			if ( toPercent ) {
+		if ( sliderLabel && sliderDirty) {
+            sliderDirty = false;
+            if ( toPercent ) {
 				sliderLabel.text = ( sliderValue * 100 ).ToString() + suffix;
 			} else {
 				sliderLabel.text = sliderValue.ToString() + suffix;
